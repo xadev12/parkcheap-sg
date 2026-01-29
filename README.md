@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ParkCheap SG - Find Cheap Parking in Singapore
+
+A mobile-first web app to search and compare carpark prices near your destination in Singapore.
+
+## 🚀 Live Demo
+
+**Production:** https://frontend-omega-steel.vercel.app
+
+## Features
+
+- 🔍 **Smart Search** - OneMap address autocomplete with Singapore addresses
+- 📍 **Geolocation** - Use current location with one tap
+- 💰 **Cost Comparison** - Carparks sorted by total cost (cheapest first)
+- 🅿️ **Availability** - Real-time lot availability with visual indicators
+- 🗺️ **Navigation** - Deep links to Waze and Google Maps
+- 📱 **Mobile-First** - iOS safe areas, touch-optimized, PWA-ready
+- ⚡ **Fast** - Skeleton loading, cached results, optimistic UI
+- ♿ **Accessible** - WCAG AA compliant, proper ARIA labels
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS 4
+- **APIs:** OneMap Singapore (geocoding), Backend API (carpark data)
+- **Deployment:** Vercel
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `BACKEND_API_URL` | Backend API base URL | Mock data |
+| `NEXT_PUBLIC_API_URL` | Client-side API URL | `` (same origin) |
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/
+│   ├── api/carparks/search/route.ts  # API route (proxy + mock)
+│   ├── globals.css                    # Global styles + safe areas
+│   ├── layout.tsx                     # Root layout + metadata
+│   └── page.tsx                       # Main search page
+├── components/
+│   ├── SearchForm.tsx                 # Location input + duration + search
+│   ├── CarparkCard.tsx                # Result card with pricing
+│   ├── NavigationButtons.tsx          # Waze + Google Maps deep links
+│   ├── SkeletonCard.tsx               # Loading skeleton
+│   └── EmptyState.tsx                 # Idle/empty/error states
+├── hooks/
+│   ├── useGeolocation.ts              # Browser geolocation
+│   └── useSearch.ts                   # Search state + caching
+├── lib/
+│   ├── api.ts                         # API client + OneMap geocoding
+│   └── navigation.ts                  # Deep link helpers
+└── types/
+    └── carpark.ts                     # TypeScript interfaces
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API Contract
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Search Carparks
+```
+GET /api/carparks/search?lat=1.304&lng=103.832&duration=3&radius=1000
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Response:
+```json
+{
+  "results": [
+    {
+      "id": "HDB-OR1",
+      "name": "Orchard Central",
+      "type": "HDB",
+      "address": "181 Orchard Rd",
+      "latitude": 1.3006,
+      "longitude": 103.8393,
+      "distance_m": 250,
+      "walk_time_min": 3,
+      "total_cost": 3.60,
+      "rate_per_hour": 1.20,
+      "available_lots": 45,
+      "total_lots": 200,
+      "updated_at": "2024-01-30T00:00:00Z"
+    }
+  ]
+}
+```
